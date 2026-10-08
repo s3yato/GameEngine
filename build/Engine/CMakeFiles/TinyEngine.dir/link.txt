@@ -1,0 +1,2 @@
+/usr/bin/ar qc libTinyEngine.a CMakeFiles/TinyEngine.dir/src/Application.cpp.o CMakeFiles/TinyEngine.dir/src/Window.cpp.o CMakeFiles/TinyEngine.dir/src/GLFWContext.cpp.o CMakeFiles/TinyEngine.dir/src/Time.cpp.o CMakeFiles/TinyEngine.dir/src/Math/Transform.cpp.o CMakeFiles/TinyEngine.dir/src/render/Render.cpp.o CMakeFiles/TinyEngine.dir/src/graphics/Shader.cpp.o
+/usr/bin/ranlib libTinyEngine.a

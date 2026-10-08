@@ -1,0 +1,12 @@
+{
+	"InstallScripts" : 
+	[
+		"/Users/suharnikovegor/\u041f\u0440\u043e\u0435\u043a\u0442\u044b/\u0441++/Road_to_offer/TinyEngine/build/cmake_install.cmake",
+		"/Users/suharnikovegor/\u041f\u0440\u043e\u0435\u043a\u0442\u044b/\u0441++/Road_to_offer/TinyEngine/build/libraries/glfw/cmake_install.cmake",
+		"/Users/suharnikovegor/\u041f\u0440\u043e\u0435\u043a\u0442\u044b/\u0441++/Road_to_offer/TinyEngine/build/libraries/glfw/src/cmake_install.cmake",
+		"/Users/suharnikovegor/\u041f\u0440\u043e\u0435\u043a\u0442\u044b/\u0441++/Road_to_offer/TinyEngine/build/libraries/glfw/docs/cmake_install.cmake",
+		"/Users/suharnikovegor/\u041f\u0440\u043e\u0435\u043a\u0442\u044b/\u0441++/Road_to_offer/TinyEngine/build/Engine/cmake_install.cmake",
+		"/Users/suharnikovegor/\u041f\u0440\u043e\u0435\u043a\u0442\u044b/\u0441++/Road_to_offer/TinyEngine/build/Sandbox/cmake_install.cmake"
+	],
+	"Parallel" : false
+}
