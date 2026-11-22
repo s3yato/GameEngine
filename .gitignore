@@ -1,0 +1,9 @@
+# Visual Studio
+.vs/
+
+# Build artifacts
+out/
+build/
+Debug/
+Release/
+x64/

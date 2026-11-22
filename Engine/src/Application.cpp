@@ -1,49 +1,51 @@
+
 #include <atlas/Application.hpp>
-#include <iostream>
 
-atlas::Application::Application(): m_player("Player") { }
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
-atlas::Application::~Application() {
+#include <stdexcept>
 
-}
-
-void atlas::Application::render() 
+namespace atlas
 {
-    m_render.clear();
-    m_render.render();
-}
+    Application::Application(IGame& game)
+        : m_input(m_window),
+        m_game(game)
+    {
+        if (!gladLoadGLLoader(
+            reinterpret_cast<GLADloadproc>(glfwGetProcAddress)))
+        {
+            throw std::runtime_error("Failed to initialize GLAD");
+        }
 
-void atlas::Application::run() {
-    while (!m_window.shouldClose()) {
-        m_window.pollEvents();
-
-        m_time.update();
-
-        float dt = m_time.deltaTime();
-        update(dt);
-        render();
-        m_window.swapBuffers();
+        m_game.initialize();
     }
-}
 
-void atlas::Application::update(float dt) {
-    constexpr float speed = 200.0f;
+    Application::~Application()
+    {
+        m_game.shutdown();
+    }
 
-    Vec2 direction;
-    if (m_window.isKeyPressed(GLFW_KEY_W)) 
-        direction.y() += 1.0f;
-    
-    if (m_window.isKeyPressed(GLFW_KEY_S)) 
-        direction.y() -= 1.0f;
-    
-    if (m_window.isKeyPressed(GLFW_KEY_A)) 
-        direction.x() -= 1.0f;
-    
-    if (m_window.isKeyPressed(GLFW_KEY_D)) 
-        direction.x() += 1.0f;
+    void Application::run()
+    {
+        while (!m_window.shouldClose())
+        {
+            m_window.pollEvents();
 
-    if (direction.length() > 0.0f) 
-        direction = direction.normalized();
+            m_time.update();
+            const float dt = m_time.deltaTime();
 
-    m_player.transform().position() += direction * speed * dt;
+            m_game.update(dt, m_input);
+            m_game.render();
+
+            m_window.swapBuffers();
+        }
+    }
+
+    void Application::setResizeCallback(
+        std::function<void(int, int)> callback
+    )
+    {
+        m_window.setResizeCallback(std::move(callback));
+    }
 }

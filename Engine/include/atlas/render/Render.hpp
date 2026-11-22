@@ -1,6 +1,11 @@
 #pragma once
 
 #include <atlas/graphics/Shader.hpp>
+#include <atlas/render/Mesh.hpp>
+#include <atlas/render/Material.hpp>
+#include <atlas/math/Matrix4.hpp>
+
+#include <memory>
 
 namespace atlas
 {
@@ -10,12 +15,18 @@ namespace atlas
             Render();
             ~Render();
 
-            void clear();
-            void render();
-        private:
-            Shader* m_shader;
+            Render(const Render&) = delete;
+            Render& operator=(const Render&) = delete;
 
-            unsigned int m_VAO;
-            unsigned int m_VBO;
+            void clear();
+            void render(
+                const Matrix4& model,
+                const Matrix4& view,
+                const Matrix4& projection
+            );
+        private:
+            Mesh m_mesh;
+            Material m_material;
+            std::unique_ptr<Shader> m_shader;
     };
 }

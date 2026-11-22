@@ -1,93 +1,68 @@
 #include <atlas/render/Render.hpp>
-#include <OpenGL/gl3.h>
+#include <atlas/math/Transform.hpp>
+
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
+#include <vector>
+#include <array>
+#include <string>
 
 namespace atlas
 {
 
     Render::Render()
+        : m_mesh(
+        std::vector<float>{
+            0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
+            0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+            -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+            -0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+    },
+        std::vector<unsigned int>{
+            0, 1, 3,
+            1, 2, 3
+    }
+        ),
+        m_material(0.0f, 1.0f, 0.0f, 1.0f),
+        m_shader(std::make_unique<Shader>(
+            std::string(ATLAS_SHADER_DIR) + "/basic.vert",
+            std::string(ATLAS_SHADER_DIR) + "/basic.frag"
+        ))
     {
-        const std::string vertexSource = R"(
-        #version 330 core 
-
-        layout (location = 0) in vec3 aPos;
-
-        void main()
-        {
-            gl_Position = vec4(aPos, 1.0);
-        }
-        )";
-
-        const std::string fragmentSource = R"(
-        #version 330 core 
-
-        out vec4 FragColor;
-
-        void main() 
-        {
-            FragColor = vec4(1.0, 0.0, 0.0, 0.1);
-        }
-        
-        )";
-
-        m_shader = new Shader(vertexSource, fragmentSource);
-
-        float vertices[] = {
-            0.0f, 0.5f, 0.0f,
-            -0.5f, -0.5f, 0.0f,
-            0.5f, -0.5f, 0.0f
-        };
-
-        glGenVertexArrays(1, &m_VAO);
-        glGenBuffers(1, &m_VBO);
-        
-        glBindVertexArray(m_VAO);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, m_VBO);
-        
-        glBufferData(
-            GL_ARRAY_BUFFER,
-            sizeof(vertices),
-            vertices,
-            GL_STATIC_DRAW
-        );
-        
-        glVertexAttribPointer(
-            0,
-            3,
-            GL_FLOAT,
-            GL_FALSE,
-            3 * sizeof(float),
-            nullptr
-        );
-        
-        glEnableVertexAttribArray(0);
-        
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    Render::~Render()
+    Render::~Render() = default;
+
+    void Render::clear()
     {
-        glDeleteVertexArrays(1, &m_VAO);
-        glDeleteBuffers(1, &m_VBO);
-
-        delete m_shader;
-    }
-
-    void Render::clear() {
-        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+        glClearColor(0.18f, 0.20f, 0.24f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
     }
 
-    void Render::render() 
+    void Render::render(
+        const Matrix4& model,
+        const Matrix4& view,
+        const Matrix4& projection
+    )
     {
         m_shader->use();
 
-        glBindVertexArray(m_VAO);
-        glDrawArrays(
-            GL_TRIANGLES,
-            0,
-            3
+        const auto colors = m_material.getColor();
+
+        m_shader->changeColor(
+            colors[0],
+            colors[1],
+            colors[2],
+            colors[3]
         );
+
+        m_shader->setMat4("model", model);
+        m_shader->setMat4("view", view);
+        m_shader->setMat4("projection", projection);
+
+        m_mesh.draw();
     }
 }

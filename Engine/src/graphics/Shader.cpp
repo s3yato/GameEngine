@@ -1,25 +1,43 @@
 #include <atlas/graphics/Shader.hpp>
 
-#include <OpenGL/gl3.h>
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <stdexcept>
-
+#include <fstream>
+#include <sstream>
+#include <string>
 namespace atlas
 {
+    std::string readShaderFile(const std::string& path)
+    {
+        std::ifstream file(path);
+
+        if (!file.is_open()) {
+            throw std::runtime_error(
+                "Failed to open shader file: " + path
+            );
+        }
+
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+
+        return buffer.str();
+    }
+
     Shader::Shader(
-        const std::string& vertexSource,
-        const std::string& fragmentSource
+        const std::string& vertexPath,
+        const std::string& fragmentPath
     )
     {
-        // -------------------------
-        // Vertex Shader
-        // -------------------------
+        const std::string vertexSource = readShaderFile(vertexPath);
+        const std::string fragmentSource = readShaderFile(fragmentPath);
 
         GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 
         const char* vertexCode = vertexSource.c_str();
 
         glShaderSource(
-            vertexShader,
+            vertexShader, 
             1,
             &vertexCode,
             nullptr
@@ -147,5 +165,21 @@ namespace atlas
     void Shader::use()
     {
         glUseProgram(m_program);
+    }
+
+    void Shader::changeColor(float r, float g, float b, float a)
+    {  
+        int vertexColorLocation = glGetUniformLocation(m_program, "ourColor");
+        glUniform4f(vertexColorLocation, r, g, b, a);
+
+    }
+
+    void Shader::setMat4(const std::string& name, const Matrix4& matrix)
+    {
+        GLint location = glGetUniformLocation(m_program, name.c_str());
+		glUniformMatrix4fv(location, 1,
+			GL_FALSE,
+			matrix.data()
+		);
     }
 }

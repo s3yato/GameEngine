@@ -17,7 +17,7 @@ namespace atlas
             }
 
             Vec2& operator+=(const Vec2& other) {
-                x_ += other.x_,
+                x_ += other.x_;
                 y_ += other.y_;
                 return *this;
             }
@@ -28,6 +28,14 @@ namespace atlas
                     y_ - other.y_
                 };
             }
+
+            Vec2& operator-=(const Vec2& other)
+            {
+                x_ -= other.x_;
+                y_ -= other.y_;
+                return *this;
+            }
+
 
             Vec2 operator*(float value) const {
                 return Vec2 {
@@ -68,8 +76,15 @@ namespace atlas
 
             float& x() { return x_; }
             float& y() { return y_; }
+
+            float x() const { return x_; }
+            float y() const { return y_; }
         private:
             float x_;
             float y_;
     };
+
+	inline Vec2 operator*(float value, const Vec2& vec) {
+		return vec * value;
+	}
 }

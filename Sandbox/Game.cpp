@@ -8,6 +8,7 @@
 
 #include <memory>
 #include <iostream>
+
 Game::~Game() = default;
 
 void Game::initialize()
@@ -15,17 +16,25 @@ void Game::initialize()
     m_playerTexture =
         std::make_unique<atlas::Texture>("assets/player.png");
 
-    m_playerSprite =
-        std::make_unique<atlas::SpriteRender>(*m_playerTexture);
-
     m_markerTexture =
         std::make_unique<atlas::Texture>("assets/enemy.png");
-    m_markerSprite =
-        std::make_unique<atlas::SpriteRender>(*m_markerTexture);
+
+    m_playerBatch =
+        std::make_unique<atlas::SpriteBatch>(*m_playerTexture);
+
+    m_markerBatch =
+        std::make_unique<atlas::SpriteBatch>(*m_markerTexture);
+
+    m_playerBatch->setStats(&m_renderStats);
+    m_markerBatch->setStats(&m_renderStats);
 
     m_render = std::make_unique<atlas::Render>();
+
     m_player.transform().scale() = { 0.5f, 0.5f };
     m_marker.transform().scale() = { 0.5f, 0.5f };
+
+    m_playerCopy.transform().position() = { 1.5f, 0.0f };
+    m_playerCopy.transform().scale() = { 0.5f, 0.5f };
 }
 
 void Game::update(float dt, const atlas::Input& input)
@@ -56,27 +65,26 @@ void Game::update(float dt, const atlas::Input& input)
 void Game::render()
 {
     m_render->clear();
+    m_renderStats.reset();
 
     const auto view = m_camera.viewMatrix();
     const auto projection = m_camera.projectionMatrix();
+    const atlas::TextureRegion fullTexture{};
 
-    m_playerSprite->render(
-        m_player.transform().matrix(),
-        view,
-        projection
-    );
+    m_playerBatch->begin(view, projection);
+    m_playerBatch->submit(m_player.transform().matrix(), fullTexture);
+    m_playerBatch->submit(m_playerCopy.transform().matrix(), fullTexture);
+    m_playerBatch->flush();
 
-    m_markerSprite->render(
-        m_marker.transform().matrix(),
-        view,
-        projection
-    );
+    m_markerBatch->begin(view, projection);
+    m_markerBatch->submit(m_marker.transform().matrix(), fullTexture);
+    m_markerBatch->flush();
 }
 
 void Game::shutdown()
 {
-    m_playerSprite.reset();
-    m_markerSprite.reset();
+    m_playerBatch.reset();
+    m_markerBatch.reset();
 
     m_playerTexture.reset();
     m_markerTexture.reset();

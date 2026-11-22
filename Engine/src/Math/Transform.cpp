@@ -1,4 +1,4 @@
-#include <atlas/Math/Transform.hpp>
+#include <atlas/math/Transform.hpp>
 
 namespace atlas {
     Vec2& Transform::position() {
@@ -23,5 +23,24 @@ namespace atlas {
 
     float Transform::rotation() const {
         return m_rotation;
+    }
+
+    Matrix4 Transform::matrix() const
+    {
+        Matrix4 translation = Matrix4::translation(
+            m_position.x(),
+            m_position.y(),
+            0.0f
+        );
+
+        Matrix4 rotation = Matrix4::rotationZ(m_rotation);
+
+        Matrix4 scale = Matrix4::scale(
+            m_scale.x(),
+            m_scale.y(),
+            1.0f
+        );
+
+        return translation * rotation * scale;
     }
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <atlas/Math/Transform.hpp>
+#include <atlas/math/Transform.hpp>
 #include <string>
 
 namespace atlas 
